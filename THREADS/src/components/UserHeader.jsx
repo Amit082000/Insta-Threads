@@ -26,7 +26,10 @@ const UserHeader = () => {
 
            
               <Box>
-                <Text fontSize={"2xl"} fontWeight={"bold"}  >
+                <Text fontSize={  {
+                    base: "md",
+                    md:"xl"
+                  } } fontWeight={"bold"}  >
                     Cristiano Ronaldo
                 </Text>
                 <Flex gap={2} alignItems={"center"}>
@@ -41,7 +44,12 @@ const UserHeader = () => {
                 <Avatar 
                 name="Cristiano Ronaldo"
                 src="cr7.png"
-                size={"xl"} />
+                size={{
+                  base: "md",
+                  md:"xl"
+
+
+                }} />
                  </Box>
             </Flex>
             <Text fontSize={"m"} >

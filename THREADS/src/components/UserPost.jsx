@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 import Actions from "./Actions"
 
 
-const UserPost = () => {
+const UserPost = ({postImg, postTitle, likes, replies}) => {
 
     return (
         <Link to={"/cristianoronaldo/post/1"} >
@@ -54,23 +54,29 @@ const UserPost = () => {
                      </Flex>
                 </Flex>
 
-                <Text fontSize={"sm"}> First Post </Text>
+                <Text fontSize={"sm"}> {postTitle} </Text>
+
+                {postImg && (
+
+               
                 <Box
                 borderRadius={6}
                 overflow={"hidden"} 
                 border ={"1px solid "}
                 borderColor={"gray.light"}>
-                    <Image src="/cr7.png" w={'full'} />
+                    <Image src={postImg} w={'full'} />
                     
-                 </Box>
+                </Box>
+
+                 )}
 
                  <Flex gap={3} m={1} >
                     <Actions /> 
                 </Flex>
                 <Flex gap={2} alignItems="center" >
-                    <Text color={"gray.light"} fontSize="sm" > 300k replies </Text>
+                    <Text color={"gray.light"} fontSize="sm" > {replies} </Text>
                     <Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.dark"}></Box>
-                    <Text color={"gray.light"} fontSize="sm"> 4m likes </Text>
+                    <Text color={"gray.light"} fontSize="sm">{likes} </Text>
 
                 </Flex>
 
