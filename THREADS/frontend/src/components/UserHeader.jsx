@@ -36,7 +36,7 @@ const UserHeader = () => {
                     <Text fontSize={"sm"}> cr7 </Text>
                     <Text fontSize={"xs"} 
                     bg={"gray.light"}
-                    color={"gray.dark"} borderRadius={"full"} > threads.net </Text>
+                    color={"white"} borderRadius={"full"} > threads.net </Text>
                 </Flex>
                 </Box> 
               

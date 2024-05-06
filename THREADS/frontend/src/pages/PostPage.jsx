@@ -60,21 +60,21 @@ const PostPage = () => {
            createdAt="2d"
             likes={100}
             userName = 'Kent Dodds' 
-            src='https://bit.ly/kent-c-dodds'
+            src ='https://bit.ly/kent-c-dodds'
               />
          <Comment
           comments="working good"
            createdAt="5d"
             likes={300}
             userName = 'Ryan Florence' 
-            src='https://bit.ly/ryan-florence' 
+            src ='https://bit.ly/ryan-florence' 
               />
          <Comment
           comments="done with this "
            createdAt="1d"
             likes={150}
             userName = 'Christian Nwamba' 
-            src='https://bit.ly/code-beast'
+            src ='https://bit.ly/code-beast'
               />
 
 
