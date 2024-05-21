@@ -16,7 +16,7 @@ const getUserProfile = async(req,res) => {
         
 
     }catch(err){
-        res.status(500).json({ message: err.message});
+        res.status(500).json({ message: err.message}); 
         console.log(err.message);
 
 }
@@ -146,7 +146,7 @@ const updateUser = async(req, res) => {
         let user = await User.findById(userId);
         if(!user) return res.status(400).json({message: "user not found"});
 
-        if(req.param.id !== userId.toString()) {
+        if(req.params.id !== userId.toString()) {
             return res.status(400).json({ message: "You cannot update others profile"});           
         }
 

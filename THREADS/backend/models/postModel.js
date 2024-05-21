@@ -17,7 +17,7 @@ const postSchema = mongoose.Schema({
     likes:{
         type:[mongoose.Schema.Types.ObjectId],
         ref: "User",
-        default:[],
+        default:[]
     },
     replies:[
         {
@@ -43,7 +43,7 @@ const postSchema = mongoose.Schema({
     timestamps: true
 } ) ;
 
-const Post  = mongoose.connect("Post", postSchema);
+const Post  = mongoose.model("Post", postSchema);
 
 
 export default Post;

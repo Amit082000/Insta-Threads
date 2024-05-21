@@ -62,18 +62,20 @@ const getPost = async(req,res) => {
 const deletePost = async(req, res) => {
 
     try{
-        const post = await Post.findById(re.params.id);
+        const post = await Post.findById(req.params.id);
 
         if(!post){
             return res.status(400).json({message: "post not found"});
 
         }
 
-        if(postMessage.postedBy.toString() !== req.user._id.toString()) {
+        if(post.postedBy.toString() !== req.user._id.toString()) {
             return res.status(401).json({message: "unauthorized to delete the post"});
         } 
 
         await Post.findByIdAndDelete(req.params.id);
+
+        res.send(200).json({message: "Post deleted !!"});
 
 
 
@@ -165,7 +167,7 @@ const getFeedPosts = async(req, res) => {
 
     try{
 
-        const userId = req.user.Id;
+        const userId = req.user._id;
         const user = await User.findById(userId);
         if(!user) return res.status(400).json({message: "user not found"});
 
