@@ -189,3 +189,4 @@ const getFeedPosts = async(req, res) => {
 
 
 export { createPost , getPost, deletePost, likeUnlikePost, replyToPost, getFeedPosts };
+
