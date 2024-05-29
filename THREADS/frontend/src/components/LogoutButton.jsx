@@ -2,6 +2,8 @@ import { Button, Toast } from "@chakra-ui/react"
 import { useSetRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import useShowToast from "../hooks/useShowToast";
+import { FiLogOut } from "react-icons/fi";
+
 
 export const LogoutButton = () => {
 
@@ -36,10 +38,11 @@ export const LogoutButton = () => {
 
     return (
     <Button 
-    position={"fixed"}
+    position={"fixed" }
     top={"30px"}
     right={"30px"}
     size={"sm"}
-    onClick={handleLogout} > Logout </Button>
+    onClick={handleLogout} > <FiLogOut size={20} />
+    </Button>
   )
 }
