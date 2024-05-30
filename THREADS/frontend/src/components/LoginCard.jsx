@@ -24,6 +24,7 @@ import userAtom from '../atoms/userAtom';
     const [showPassword, setShowPassword] = useState(false);
     const setAuthScreen =  useSetRecoilState(authScreenAtom);
     const setUser = useSetRecoilState(userAtom);
+    const [loading, setLoading] = useState(false);
 
 
     const [inputs, setInputs] = useState({
@@ -34,6 +35,7 @@ import userAtom from '../atoms/userAtom';
     const showToast = useShowToast();
 
     const handleLogin = async () => {
+      setLoading(true);
         try{ 
             const res = await fetch("/api/users/login",{
                 method: "POST",
@@ -56,7 +58,9 @@ import userAtom from '../atoms/userAtom';
         }catch(err){
             showToast("Error", err, "error");
 
-        } 
+        }  finally{
+          setLoading(false);
+        }
     }
   
     return (
@@ -117,7 +121,7 @@ import userAtom from '../atoms/userAtom';
                   color={'white'}
                   _hover={{
                     bg: useColorModeValue("gray.700","gray.800"),
-                  }} onClick={handleLogin} >
+                  }} onClick={handleLogin}  isLoading={loading} >
                  Login
                 </Button>
               </Stack>

@@ -2,25 +2,31 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/helpers/generateTokenAndSetCookie.js";
 import {v2 as cloudinary} from "cloudinary";
+import mongoose from "mongoose";
+import Post from "../models/postModel.js";
 
 const getUserProfile = async(req,res) => {
 
-    const {username} = req.params;
-    
-    try{
-        const user = await User.findOne({username}).select("-password").select("-updatedAt");
-        if(!user) return res.status(400).json({error: "user not found"});
+    const { query } = req.params;
 
-        res.status(200).json(user)
+	try {
+		let user;
 
+		// query is userId
+		if (mongoose.Types.ObjectId.isValid(query)) {
+			user = await User.findOne({ _id: query }).select("-password").select("-updatedAt");
+		} else {
+			// query is username
+			user = await User.findOne({ username: query }).select("-password").select("-updatedAt");
+		}
 
-        
+		if (!user) return res.status(404).json({ error: "User not found" });
 
-    }catch(err){
-        res.status(500).json({ error: err.message}); 
-        console.log(err.message);
-
-}
+		res.status(200).json(user);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+		console.log("Error in getUserProfile: ", err.message);
+	}
 }
 
 const signupUser = async(req, res) => {
@@ -141,55 +147,60 @@ const followUnfollowUser = async (req, res) => {
 
 const updateUser = async(req, res) => {
 
+    const { name, email, username, password, bio } = req.body;
+	let { profilePic } = req.body;
 
-        const {name, email, username, password, bio} = req.body;
-        let { profilePic } = req.body;
-        const userId = req.user_id;
+	const userId = req.user._id;
+	try {
+		let user = await User.findById(userId);
+		if (!user) return res.status(400).json({ error: "User not found" });
 
-    try{
+		if (req.params.id !== userId.toString())
+			return res.status(400).json({ error: "You cannot update other user's profile" });
 
-        let user = await User.findById(userId);
-        if(!user) return res.status(400).json({error: "user not found"});
+		if (password) {
+			const salt = await bcrypt.genSalt(10);
+			const hashedPassword = await bcrypt.hash(password, salt);
+			user.password = hashedPassword;
+		}
 
-        if(req.params.id !== userId.toString()) {
-            return res.status(400).json({ error: "You cannot update others profile"});           
-        }
+		if (profilePic) {
+			if (user.profilePic) {
+				await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
+			}
 
-        if(password){
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        user.password = hashedPassword;
-        }
+			const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+			profilePic = uploadedResponse.secure_url;
+		}
 
-        if(profilePic){
-            if(user.profilePic){
-                await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split("."[0]));
-            }
-            
-            const uploadedResponse = await cloudinary.uploader.upload(profilePic);
-            profilePic = uploadedResponse.secure_url;
-        }
+		user.name = name || user.name;
+		user.email = email || user.email;
+		user.username = username || user.username;
+		user.profilePic = profilePic || user.profilePic;
+		user.bio = bio || user.bio;
 
-        user.name = name || user.name;
-        user.email = email || user.email;
-        user.username = username || user.username;
-        user.profilePic = profilePic || user.profilePic;
-        user.bio = bio || user.bio;
+		user = await user.save();
 
-        user =  await user.save();
+		await Post.updateMany(
+			{ "replies.userId": userId },
+			{
+				$set: {
+					"replies.$[reply].username": user.username,
+					"replies.$[reply].userProfilePic": user.profilePic,
+				},
+			},
+			{ arrayFilters: [{ "reply.userId": userId }] }
+		);
 
+		// password should be null in response
+		user.password = null;
 
-        user.password = null;
-
-        res.status(200).json(user);
-
-    }catch(err){
-        res.status(500).json({ error: err.message});
-        console.log(err.message);
-    }
-
-}
-
+		res.status(200).json(user);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+		console.log("Error in updateUser: ", err.message);
+	}
+};
 
 
 export {signupUser, loginUser, logoutUser, followUnfollowUser, updateUser, getUserProfile};
